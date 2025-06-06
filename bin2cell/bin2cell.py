@@ -58,12 +58,13 @@ def load_image(image_path, gray=False, dtype=np.uint8):
     dtype : ``numpy.dtype``, optional (default: ``numpy.uint8``)
         Data type of the numpy array output.
     '''
-    img = cv2.imread(image_path)
-    #loaded as BGR by default, turn to the expected RGB
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    #optionally turn to greyscale
-    if gray:
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    #Use tiffile to read image (as cv2 triggered an error)
+    img = tf.imread(image_path)
+    #Check parameter and array dimensionality to make sure to return
+    #numpy arrays of expected dimensionality ()
+    if not gray and not img.ndim == 3:
+        img = img[:, :, np.newaxis]
+
     #copy=False means that there's no extra copy made if the dtype already matches
     #which it will for np.uint8
     return img.astype(dtype, copy=False)
